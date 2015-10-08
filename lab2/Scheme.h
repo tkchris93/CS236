@@ -16,4 +16,5 @@ public:
     
     vector<Token> tokens;
 };
+
 #endif

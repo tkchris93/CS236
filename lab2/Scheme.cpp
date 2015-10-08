@@ -10,6 +10,7 @@ Scheme::Scheme(vector<Token> t)
 string Scheme::toStr()
 {
     stringstream ss;
+    ss << "  ";
     for (unsigned int i = 0; i < this->tokens.size(); i++)
     {
         ss << tokens[i].chars;

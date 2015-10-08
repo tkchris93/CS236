@@ -1,3 +1,9 @@
 Schemes:
   snap(S,N,A,P)
   top(T) 
+  snap(S,N,A,P)
+  top(T) 
+  snap(S,N,A,P)
+  top(T) 
+  snap(S,N,A,P)
+  top(T) 

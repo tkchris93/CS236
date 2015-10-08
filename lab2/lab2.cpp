@@ -5,6 +5,7 @@
 #include "Lexer.h"
 #include "Scheme.h"
 #include "Token.h"
+#include "DP.h"
 
 using namespace std;
 
@@ -12,7 +13,7 @@ Token consume_terminal(vector<Token> &t, string term)
 {
     if (t[0].type == term)
     {
-        //cout << "found " << term << endl;
+        cout << "found " << term << endl;
         Token token = t[0];
         t.erase(t.begin());
         return token;
@@ -23,95 +24,102 @@ Token consume_terminal(vector<Token> &t, string term)
     }
 }
 
-vector<Token> idList(vector<Token> &t)
+vector<Token> stringList(vector<Token> &t)
 {
     vector<Token> list;
-    if (t[0].type == "COMMA")
+    if (t[0].type == "RIGHT_PAREN")
+    {
+        return list;
+    }
+    else if (t[0].type == "COMMA")
     {
         list.push_back(consume_terminal(t, "COMMA"));
-        list.push_back(consume_terminal(t, "ID"));
-        for (auto &i : idList(t))
+        list.push_back(consume_terminal(t, "STRING"));
+        for (auto &i : stringList(t))
         {
             list.push_back(i);
         }
     }
-    else if (t[0].type == "RIGHT_PAREN")
-    {
-        return list;
-    }
-    else
-    {
-        cout << "ERROR! Expected COMMA or RIGHT_PAREN and got " << t[0].type << endl;
-    }
     return list;
 }
 
-vector<Token> scheme(vector<Token> &t)
+vector<Token> fact(vector<Token> &t)
 {
     vector<Token> list;
     list.push_back(consume_terminal(t, "ID"));
     list.push_back(consume_terminal(t, "LEFT_PAREN"));
-    list.push_back(consume_terminal(t, "ID"));
-    for (auto &i : idList(t))
+    list.push_back(consume_terminal(t, "STRING"));
+    for (auto &i : stringList(t))
     {
         list.push_back(i);
     }
     list.push_back(consume_terminal(t, "RIGHT_PAREN"));
+    list.push_back(consume_terminal(t, "PERIOD"));
     return list;
 }
 
-vector<vector<Token>> schemeList(vector<Token> &t)
+vector<vector<Token>> factList(vector<Token> &t)
 {
-    vector<vector<Token>> schemes_list;
-    if (t[0].type == "FACTS")
+    vector<vector<Token>> list;
+    if (t[0].type == "RULES")
     {
-        return schemes_list;
+        return list;
     }
     else if (t[0].type == "ID")
     {
-        schemes_list.push_back(scheme(t));
-        for (auto &i : schemeList(t))
+        list.push_back(fact(t));
+        for (auto &i : factList(t))
         {
-            schemes_list.push_back(i);
+            list.push_back(i);
         }
     }
-    return schemes_list;
+    return list;
 }
 
-vector<vector<Token>> schemeObject(vector<Token> &t)
+vector<vector<Token>> factObject(vector<Token> &t)
 {
-    vector<vector<Token>> my_big_fat_list;
-    consume_terminal(t, "SCHEMES");
+    consume_terminal(t, "FACTS");
     consume_terminal(t, "COLON");
-    my_big_fat_list.push_back(scheme(t));
-    for (auto &i : schemeList(t))
-    {
-        my_big_fat_list.push_back(i);
-    }
-    return my_big_fat_list;
+    return factList(t);
 }
 
 int main(int argc, char* argv[])
 {
-    Lexer lexer = Lexer(argv[1]);
-
-    lexer.generate_tokens();
-    vector<Token> tokenList = lexer.tokens;
-    //cout << lexer.toStr() << endl;
-    //cout << "============" << endl;
-    // CHECKING VALIDITY
-
-    vector<vector<Token>> fat_list = schemeObject(tokenList);
-    vector<Scheme> perfect_list;
-    for (unsigned int i = 0; i < fat_list.size(); i++)
+    //DP datalogProgram = DP(argv[1]);
+    
+    
+    // print Schemes list WORKING
+    /*
+    cout << "Schemes(" << datalogProgram.schemes_list.size() << "):" << endl;
+    for (unsigned int i = 0; i < datalogProgram.schemes_list.size(); i++)
     {
-        Scheme temp = Scheme(fat_list[i]);
-        perfect_list.push_back(temp);
+        cout << datalogProgram.schemes_list[i].toStr();
+    }
+    */ 
+    
+    // print Facts list
+    Lexer lexer = Lexer(argv[1]);
+    lexer.generate_tokens();
+    vector<Token> t = lexer.tokens;
+    
+    cout << lexer.toStr() << endl;
+    /*
+    consume_terminal(t, "FACTS");
+    consume_terminal(t, "COLON");
+    vector<vector<Token>> list_of_facts = factList(t);
+    */
+    
+    vector<vector<Token>> list_of_facts = factObject(t);
+    
+    for (unsigned int i = 0; i < list_of_facts.size(); i++)
+    {
+        for (unsigned int j = 0; j < list_of_facts[i].size();j++)
+        {
+            cout << list_of_facts[i][j].toStr();
+        }
+        cout << endl;
     }
     
-    for (unsigned int i = 0; i < perfect_list.size(); i++)
-    {
-        cout << perfect_list[i].toStr();
-    }
+    
     return 0;
 }
