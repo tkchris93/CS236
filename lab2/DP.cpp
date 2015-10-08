@@ -1,6 +1,6 @@
 #include "DP.h"
 
-Token consume_terminal(vector<Token> &t, string term)
+Token DP::consume_terminal(vector<Token> &t, string term)
 {
     if (t[0].type == term)
     {
@@ -15,7 +15,7 @@ Token consume_terminal(vector<Token> &t, string term)
     }
 }
 
-vector<Token> idList(vector<Token> &t)
+vector<Token> DP::idList(vector<Token> &t)
 {
     vector<Token> list;
     if (t[0].type == "COMMA")
@@ -38,7 +38,7 @@ vector<Token> idList(vector<Token> &t)
     return list;
 }
 
-vector<Token> scheme(vector<Token> &t)
+vector<Token> DP::scheme(vector<Token> &t)
 {
     vector<Token> list;
     list.push_back(consume_terminal(t, "ID"));
@@ -52,7 +52,7 @@ vector<Token> scheme(vector<Token> &t)
     return list;
 }
 
-vector<vector<Token>> schemeList(vector<Token> &t)
+vector<vector<Token>> DP::schemeList(vector<Token> &t)
 {
     vector<vector<Token>> schemes_list;
     if (t[0].type == "FACTS")
@@ -70,7 +70,7 @@ vector<vector<Token>> schemeList(vector<Token> &t)
     return schemes_list;
 }
 
-vector<vector<Token>> schemeObject(vector<Token> &t)
+vector<vector<Token>> DP::schemeObject(vector<Token> &t)
 {
     vector<vector<Token>> my_big_fat_list;
     consume_terminal(t, "SCHEMES");
