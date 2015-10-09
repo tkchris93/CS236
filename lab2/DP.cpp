@@ -6,7 +6,8 @@ DP::DP(char* filename)
     lexer.generate_tokens(); // text to tokens
     vector<Token> tokenList = lexer.tokens; // store tokens
     
-    /* SCHEMES IS WORKING
+    // SCHEMES IS WORKING
+    /*
     // Initialize list of tokens read and create list of Schemes
     vector<vector<Token>> init_scheme_list = this->schemeObject(tokenList); 
     for (unsigned int i = 0; i < init_scheme_list.size(); i++)
@@ -16,10 +17,9 @@ DP::DP(char* filename)
     }
     */
     
-    
-    
-    // Initialize list of tokens read and create list of Facts
+    // FACTS IS WORKING
     /*
+    // Initialize list of tokens read and create list of Facts
     vector<vector<Token>> init_fact_list = this->factObject(tokenList);
     for (unsigned int i = 0; i < init_fact_list.size(); i++)
     {
@@ -193,3 +193,45 @@ vector<vector<Token>> DP::factList(vector<Token> &t)
     return fac_list;
 }
 */
+
+vector<Token> DP::fact(vector<Token> &t)
+{
+    vector<Token> list;
+    list.push_back(consume_terminal(t, "ID"));
+    list.push_back(consume_terminal(t, "LEFT_PAREN"));
+    list.push_back(consume_terminal(t, "STRING"));
+    for (auto &i : stringList(t))
+    {
+        list.push_back(i);
+    }
+    list.push_back(consume_terminal(t, "RIGHT_PAREN"));
+    list.push_back(consume_terminal(t, "PERIOD"));
+    return list;
+}
+
+vector<vector<Token>> DP::factList(vector<Token> &t)
+{
+    vector<vector<Token>> list;
+    if (t[0].type == "RULES")
+    {
+        return list;
+    }
+    else if (t[0].type == "ID")
+    {
+        list.push_back(fact(t));
+        for (auto &i : factList(t))
+        {
+            list.push_back(i);
+        }
+    }
+    return list;
+}
+
+vector<vector<Token>> DP::factObject(vector<Token> &t)
+{
+    consume_terminal(t, "FACTS");
+    consume_terminal(t, "COLON");
+    return factList(t);
+}
+
+

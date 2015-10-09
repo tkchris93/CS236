@@ -24,69 +24,125 @@ Token consume_terminal(vector<Token> &t, string term)
     }
 }
 
-vector<Token> stringList(vector<Token> &t)
+Token oper(vector<Token> &t)
+{
+    if (t[0].type == "ADD")
+    {
+        return consume_terminal(t, "ADD");
+    }
+    
+    else if (t[0].type == "MULTIPY")
+    {
+        return consume_terminal(t, "MULTIPLY");
+    }    
+    else
+    {
+        cout << "ERROR when reading operator" << endl;
+    }
+}
+
+vector<Token> parameter(vector<Token> &t)
 {
     vector<Token> list;
-    if (t[0].type == "RIGHT_PAREN")
+    if (t[0].type == "STRING")
     {
-        return list;
-    }
-    else if (t[0].type == "COMMA")
-    {
-        list.push_back(consume_terminal(t, "COMMA"));
         list.push_back(consume_terminal(t, "STRING"));
-        for (auto &i : stringList(t))
+    }
+    else if (t[0].type == "ID")
+    {
+        list.push_back(consume_terminal(t, "ID"));
+    }
+    else if (t[0].type == "LEFT_PAREN")
+    {
+        for (auto &i : expression(t))
         {
-            list.push_back(i);
+            list.push_back(consume_terminal(i));
         }
+    } 
+    else
+    {
+        cout << "ERROR when reading paramter" << endl;
     }
     return list;
 }
 
-vector<Token> fact(vector<Token> &t)
+vector<Token> expression(vector<Token> &t)
+{
+    vector<Token> list;
+    list.push_back(consume_terminal(t, "LEFT_PAREN"));
+    for (auto &i : parameter(t))
+    {
+        list.push_back(i);
+    }
+    list.push_back(oper(t))
+    for (auto &i : parameter(t))
+    {
+        list.push_back(i);
+    }    
+    list.push_back(consume_terminal(t, "LEFT_PAREN"));
+    return list;
+}
+
+vector<Token> parameterList(vector<Token> &t)
+{
+    vector<Token> list;
+    if (t[0].type == "COMMA")
+    {
+        list.push_back(consume_terminal(t, "COMMA"));
+        for (auto &i : parameter(t))
+        {
+            list.push_back(i);
+        }
+        for (auto &i : parameterList(t))
+        {
+            list.push_back(i);
+        }
+    }
+    else if (t[0].type == "RIGHT_PAREN")
+    {
+        return list;
+    }
+    else
+    {
+        cout << "ERROR when reading parameterList" << endl;
+    }
+    return list;
+}
+
+vector<Token> predicate(vector<Token> &t)
 {
     vector<Token> list;
     list.push_back(consume_terminal(t, "ID"));
     list.push_back(consume_terminal(t, "LEFT_PAREN"));
-    list.push_back(consume_terminal(t, "STRING"));
-    for (auto &i : stringList(t))
+    for (auto &i : parameter(t))
     {
         list.push_back(i);
     }
-    list.push_back(consume_terminal(t, "RIGHT_PAREN"));
+    for (auto &i : parameterList(t))
+    {
+        list.push_back(i);
+    }
     list.push_back(consume_terminal(t, "PERIOD"));
-    return list;
 }
 
-vector<vector<Token>> factList(vector<Token> &t)
+vector<Token> query(vector<Token> &t)
 {
-    vector<vector<Token>> list;
-    if (t[0].type == "RULES")
+    vector<Token> list;
+    for (auto &i : predicate(t))
     {
-        return list;
+        list.push_back(i);
     }
-    else if (t[0].type == "ID")
-    {
-        list.push_back(fact(t));
-        for (auto &i : factList(t))
-        {
-            list.push_back(i);
-        }
-    }
+    list.push_back(consume_terminal(t, "Q_MARK"));
     return list;
-}
-
-vector<vector<Token>> factObject(vector<Token> &t)
-{
-    consume_terminal(t, "FACTS");
-    consume_terminal(t, "COLON");
-    return factList(t);
 }
 
 int main(int argc, char* argv[])
 {
     //DP datalogProgram = DP(argv[1]);
     
+    Lexer lexer = Lexer(argv[1]);
+    lexer.generate_tokens(); // text to tokens
+    vector<Token> t = lexer.tokens; // store tokens
     
     // print Schemes list WORKING
     /*
@@ -95,30 +151,25 @@ int main(int argc, char* argv[])
     {
         cout << datalogProgram.schemes_list[i].toStr();
     }
-    */ 
-    
-    // print Facts list
-    Lexer lexer = Lexer(argv[1]);
-    lexer.generate_tokens();
-    vector<Token> t = lexer.tokens;
-    
-    cout << lexer.toStr() << endl;
-    /*
-    consume_terminal(t, "FACTS");
-    consume_terminal(t, "COLON");
-    vector<vector<Token>> list_of_facts = factList(t);
     */
     
-    vector<vector<Token>> list_of_facts = factObject(t);
-    
-    for (unsigned int i = 0; i < list_of_facts.size(); i++)
+    // print Facts list WORKING
+    /*
+    cout << "Facts(" << datalogProgram.facts_list.size() << "):" << endl;
+    for (unsigned int i = 0 ; i < datalogProgram.facts_list.size(); i++)
     {
-        for (unsigned int j = 0; j < list_of_facts[i].size();j++)
-        {
-            cout << list_of_facts[i][j].toStr();
-        }
-        cout << endl;
+        cout << datalogProgram.facts_list[i].toStr();
     }
+    */
+    
+    consume_terminal(t, "QUERIES");
+    consume_terminal(t, "COLON");
+    vector<Token> q = query(t);
+    for (auto &i : q)
+    {
+        cout << i.toStr();
+    }
+    cout << endl;
     
     
     return 0;
