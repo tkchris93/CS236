@@ -8,7 +8,7 @@
 #include "DP.h"
 
 using namespace std;
-
+/*
 Token consume_terminal(vector<Token> &t, string term)
 {
     if (t[0].type == term)
@@ -135,42 +135,55 @@ vector<Token> query(vector<Token> &t)
     list.push_back(consume_terminal(t, "Q_MARK"));
     return list;
 }
-
+*/
 int main(int argc, char* argv[])
 {
-    //DP datalogProgram = DP(argv[1]);
-    
+    DP datalogProgram = DP(argv[1]);
+    /*
     Lexer lexer = Lexer(argv[1]);
     lexer.generate_tokens(); // text to tokens
     vector<Token> t = lexer.tokens; // store tokens
+    */
     
     // print Schemes list WORKING
-    /*
+    
     cout << "Schemes(" << datalogProgram.schemes_list.size() << "):" << endl;
     for (unsigned int i = 0; i < datalogProgram.schemes_list.size(); i++)
     {
         cout << datalogProgram.schemes_list[i].toStr();
     }
-    */
+    
     
     // print Facts list WORKING
-    /*
+    
     cout << "Facts(" << datalogProgram.facts_list.size() << "):" << endl;
     for (unsigned int i = 0 ; i < datalogProgram.facts_list.size(); i++)
     {
         cout << datalogProgram.facts_list[i].toStr();
     }
-    */
     
-    consume_terminal(t, "QUERIES");
-    consume_terminal(t, "COLON");
-    vector<Token> q = query(t);
-    for (auto &i : q)
+    
+    // print Query list WORKING
+    cout << "Queries(" << datalogProgram.query_list.size() << "):" << endl;
+    for (unsigned int i = 0 ; i < datalogProgram.query_list.size(); i++)
     {
-        cout << i.toStr();
+        cout << datalogProgram.query_list[i].toStr();
     }
-    cout << endl;
     
+    
+    /*
+    vector<vector<Token>> q_list = datalogProgram.queryObject(datalogProgram.tokenList);
+    for (auto &i : q_list)
+    {
+        for (auto &j : i)
+        {
+            cout << j.toStr();
+        }
+        cout << endl;
+    }
+    
+    cout << endl;
+    */
     
     return 0;
 }

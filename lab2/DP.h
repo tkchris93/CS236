@@ -3,6 +3,7 @@
 #include "Scheme.h"
 #include "Lexer.h"
 #include "Fact.h"
+#include "Query.h"
 
 using namespace std;
 
@@ -22,11 +23,22 @@ public:
     vector<vector<Token>> factList(vector<Token> &t);
     vector<vector<Token>> factObject(vector<Token> &t);
     
+    Token oper(vector<Token> &t);
+    vector<Token> parameter(vector<Token> &t);
+    vector<Token> expression(vector<Token> &t);
+    vector<Token> parameterList(vector<Token> &t);
+    vector<Token> predicate(vector<Token> &t);
+    vector<Token> query(vector<Token> &t);
+    vector<vector<Token>> queryList(vector<Token> &t);
+    vector<vector<Token>> queryObject(vector<Token> &t);
+    
     vector<Scheme> schemes_list;
     vector<Fact> facts_list;
     //vector<Rule> rule_list;
-    //vector<Query> query_list;
+    vector<Query> query_list;
     //vector<string> domain;
+    
+    vector<Token> tokenList;
 };
 
 #endif
