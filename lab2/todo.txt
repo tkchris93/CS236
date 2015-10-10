@@ -1,0 +1,3 @@
+Be sure to handle invalid input with exceptions and what-not. Look into try-catch statements.
+Ignore comments.
+consider removing all the reference calls to the list t since it is stored within the class.

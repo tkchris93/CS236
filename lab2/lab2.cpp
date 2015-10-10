@@ -163,27 +163,32 @@ int main(int argc, char* argv[])
     }
     
     
+    // print Rule list
+    
+    cout << "Rule(" << datalogProgram.rule_list.size() << "):" << endl;
+    for (unsigned int i = 0 ; i < datalogProgram.rule_list.size(); i++)
+    {
+        cout << datalogProgram.rule_list[i].toStr();
+    }
+    
+    
     // print Query list WORKING
+    
     cout << "Queries(" << datalogProgram.query_list.size() << "):" << endl;
     for (unsigned int i = 0 ; i < datalogProgram.query_list.size(); i++)
     {
         cout << datalogProgram.query_list[i].toStr();
     }
     
-    
-    /*
-    vector<vector<Token>> q_list = datalogProgram.queryObject(datalogProgram.tokenList);
-    for (auto &i : q_list)
+/*
+    vector<vector<Token>> r = datalogProgram.ruleObject(datalogProgram.tokenList);
+    for (auto &i : r)
     {
         for (auto &j : i)
-        {
             cout << j.toStr();
-        }
         cout << endl;
     }
-    
     cout << endl;
-    */
-    
+*/    
     return 0;
 }
