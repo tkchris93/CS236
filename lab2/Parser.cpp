@@ -68,10 +68,6 @@ void Parser::parse()
     catch(Token bad_token)
     {
         throw bad_token;
-        /*
-        cout << "Failure!" << endl;
-        cout << bad_token.toStr() << endl;
-        */
     }    
 }
 

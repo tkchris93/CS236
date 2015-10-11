@@ -12,48 +12,6 @@ DP::DP(char* filename)
             tokenList.push_back(i);
         }
     }
-    
-    /*
-    // SCHEMES IS WORKING
-    
-    // Initialize list of tokens read and create list of Schemes
-    
-    vector<vector<Token>> init_scheme_list = this->schemeObject(tokenList); 
-    for (unsigned int i = 0; i < init_scheme_list.size(); i++)
-    {
-        Scheme temp = Scheme(init_scheme_list[i]);
-        this->schemes_list.push_back(temp);
-    }
-    
-    
-    // FACTS IS WORKING
-    
-    // Initialize list of tokens read and create list of Facts
-    vector<vector<Token>> init_fact_list = this->factObject(tokenList);
-    for (unsigned int i = 0; i < init_fact_list.size(); i++)
-    {
-        Fact temp = Fact(init_fact_list[i]);
-        this->facts_list.push_back(temp);
-    }
-    
-    
-    vector<vector<Token>> init_rule_list = this->ruleObject(tokenList);
-    for (unsigned int i = 0; i < init_rule_list.size(); i++)
-    {
-        Rule temp = Rule(init_rule_list[i]);
-        this->rule_list.push_back(temp);
-    }
-    
-    // QUERIES IS WORKING
-    
-    // Initialize list of tokens read and create list of Queries
-    vector<vector<Token>> init_query_list = this->queryObject(tokenList);
-    for (unsigned int i = 0; i < init_query_list.size(); i++)
-    {
-        Query temp = Query(init_query_list[i]);
-        this->query_list.push_back(temp);
-    }
-    */
 }
 
 Token DP::consume_terminal(vector<Token> &t, string term)
