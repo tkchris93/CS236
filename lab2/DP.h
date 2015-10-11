@@ -36,12 +36,13 @@ public:
     vector<vector<Token>> queryObject(vector<Token> &t);
     vector<Token> stringList(vector<Token> &t);
     
+    /*
     vector<Scheme> schemes_list;
     vector<Fact> facts_list;
     vector<Rule> rule_list;
     vector<Query> query_list;
     //vector<string> domain;
-    
+    */
     vector<Token> tokenList;
 };
 

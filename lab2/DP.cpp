@@ -13,6 +13,7 @@ DP::DP(char* filename)
         }
     }
     
+    /*
     // SCHEMES IS WORKING
     
     // Initialize list of tokens read and create list of Schemes
@@ -52,6 +53,7 @@ DP::DP(char* filename)
         Query temp = Query(init_query_list[i]);
         this->query_list.push_back(temp);
     }
+    */
 }
 
 Token DP::consume_terminal(vector<Token> &t, string term)
@@ -65,51 +67,77 @@ Token DP::consume_terminal(vector<Token> &t, string term)
     }
     else
     {
-        cout << "ERROR! Expected: " << term << " and got " << t[0].type << endl;
-        //throw t[0];
+        //cout << "ERROR! Expected: " << term << " and got " << t[0].type << endl;
+        throw t[0];
     }
 }
 
 vector<Token> DP::scheme(vector<Token> &t)
 {
     vector<Token> list;
-    list.push_back(consume_terminal(t, "ID"));
-    list.push_back(consume_terminal(t, "LEFT_PAREN"));
-    list.push_back(consume_terminal(t, "ID"));
-    for (auto &i : idList(t))
+    try
     {
-        list.push_back(i);
+        list.push_back(consume_terminal(t, "ID"));
+        list.push_back(consume_terminal(t, "LEFT_PAREN"));
+        list.push_back(consume_terminal(t, "ID"));
+        for (auto &i : idList(t))
+        {
+            list.push_back(i);
+        }
+        list.push_back(consume_terminal(t, "RIGHT_PAREN"));
     }
-    list.push_back(consume_terminal(t, "RIGHT_PAREN"));
+    catch(Token bad_token)
+    {
+        throw bad_token;
+    }
     return list;
 }
+
 vector<vector<Token>> DP::schemeList(vector<Token> &t)
 {
-    vector<vector<Token>> sch_list;
-    if (t[0].type == "FACTS")
+    vector<vector<Token>> list;
+    try
     {
-        return sch_list;
-    }
-    else if (t[0].type == "ID")
-    {
-        sch_list.push_back(scheme(t));
-        for (auto &i : schemeList(t))
+        if (t[0].type == "FACTS")
         {
-            sch_list.push_back(i);
+            return list;
+        }
+        else if (t[0].type == "ID")
+        {
+            list.push_back(scheme(t));
+            for (auto &i : schemeList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else
+        {
+            throw t[0];
         }
     }
-    return sch_list;
+    catch (Token bad_token)
+    {
+        throw bad_token;
+    }
+    return list;
 }
 
 vector<vector<Token>> DP::schemeObject(vector<Token> &t)
 {
     vector<vector<Token>> list;
-    consume_terminal(t, "SCHEMES");
-    consume_terminal(t, "COLON");
-    list.push_back(scheme(t));
-    for (auto &i : schemeList(t))
+    try
     {
-        list.push_back(i);
+        consume_terminal(t, "SCHEMES");
+        consume_terminal(t, "COLON");
+        list.push_back(scheme(t));
+        for (auto &i : schemeList(t))
+        {
+            list.push_back(i);
+        }
+    }
+    catch(Token bad_token)
+    {
+        throw bad_token;
     }
     return list;
 }
@@ -117,22 +145,30 @@ vector<vector<Token>> DP::schemeObject(vector<Token> &t)
 vector<Token> DP::idList(vector<Token> &t)
 {
     vector<Token> list;
-    if (t[0].type == "COMMA")
+    try
     {
-        list.push_back(consume_terminal(t, "COMMA"));
-        list.push_back(consume_terminal(t, "ID"));
-        for (auto &i : idList(t))
+        if (t[0].type == "COMMA")
         {
-            list.push_back(i);
+            list.push_back(consume_terminal(t, "COMMA"));
+            list.push_back(consume_terminal(t, "ID"));
+            for (auto &i : idList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else if (t[0].type == "RIGHT_PAREN")
+        {
+            return list;
+        }
+        else
+        {
+            //cout << "ERROR! Expected COMMA or RIGHT_PAREN and got " << t[0].type << endl;
+            throw t[0];
         }
     }
-    else if (t[0].type == "RIGHT_PAREN")
+    catch(Token bad_token)
     {
-        return list;
-    }
-    else
-    {
-        cout << "ERROR! Expected COMMA or RIGHT_PAREN and got " << t[0].type << endl;
+        throw bad_token;
     }
     return list;
 }
@@ -140,126 +176,76 @@ vector<Token> DP::idList(vector<Token> &t)
 vector<Token> DP::fact(vector<Token> &t)
 {
     vector<Token> list;
-    list.push_back(consume_terminal(t, "ID"));
-    list.push_back(consume_terminal(t, "LEFT_PAREN"));
-    list.push_back(consume_terminal(t, "STRING"));
-    for (auto &i : stringList(t))
+    try
     {
-        list.push_back(i);
+        list.push_back(consume_terminal(t, "ID"));
+        list.push_back(consume_terminal(t, "LEFT_PAREN"));
+        list.push_back(consume_terminal(t, "STRING"));
+        for (auto &i : stringList(t))
+        {
+            list.push_back(i);
+        }
+        list.push_back(consume_terminal(t, "RIGHT_PAREN"));
+        list.push_back(consume_terminal(t, "PERIOD"));
     }
-    list.push_back(consume_terminal(t, "RIGHT_PAREN"));
-    list.push_back(consume_terminal(t, "PERIOD"));
+    catch(Token bad_token)
+    {
+        throw bad_token;
+    }
     return list;
 }
 
 vector<vector<Token>> DP::factList(vector<Token> &t)
 {
     vector<vector<Token>> list;
-    if (t[0].type == "RULES")
+    try
     {
-        return list;
-    }
-    else if (t[0].type == "ID")
-    {
-        list.push_back(fact(t));
-        for (auto &i : factList(t))
+        if (t[0].type == "RULES")
         {
-            list.push_back(i);
+            return list;
         }
+        else if (t[0].type == "ID")
+        {
+            list.push_back(fact(t));
+            for (auto &i : factList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else
+        {
+            throw t[0];
+        }
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
     }
     return list;
 }
 
 vector<vector<Token>> DP::factObject(vector<Token> &t)
 {
-    consume_terminal(t, "FACTS");
-    consume_terminal(t, "COLON");
-    return factList(t);
+    vector<vector<Token>> list;
+    try
+    {
+        consume_terminal(t, "FACTS");
+        consume_terminal(t, "COLON");
+        list = factList(t);
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
+    }
+    return list;
 }
 
 vector<Token> DP::rule(vector<Token> &t)
 {
     vector<Token> list = headPredicate(t);
-    list.push_back(consume_terminal(t, "COLON_DASH"));
-    for (auto &i : predicate(t))
+    try
     {
-        list.push_back(i);
-    }
-    for (auto &i : predicateList(t))
-    {
-        list.push_back(i);
-    }
-    list.push_back(consume_terminal(t, "PERIOD"));
-    return list;
-}
-
-vector<vector<Token>> DP::ruleList(vector<Token> &t)
-{
-    vector<vector<Token>> list;
-    if (t[0].type == "ID")
-    {
-        list.push_back(rule(t));
-        for (auto &i : ruleList(t))
-        {
-            list.push_back(i);
-        }
-    }
-    else if (t[0].type == "QUERIES")
-    {
-        return list;
-    }
-    else
-    {
-        cout << "ERROR while reading ruleList" << endl;
-        cout << "Found: " << t[0].type << endl;
-    }
-    return list;
-}
-
-vector<vector<Token>> DP::ruleObject(vector<Token> &t)
-{
-    consume_terminal(t, "RULES");
-    consume_terminal(t, "COLON");
-    return ruleList(t);
-}
-
-vector<Token> DP::headPredicate(vector<Token> &t)
-{
-    vector<Token> list;
-    list.push_back(consume_terminal(t, "ID"));
-    list.push_back(consume_terminal(t, "LEFT_PAREN"));
-    list.push_back(consume_terminal(t, "ID"));
-    for (auto &i : idList(t))
-    {
-        list.push_back(i);
-    }
-    list.push_back(consume_terminal(t, "RIGHT_PAREN"));
-    return list;
-}
-
-vector<Token> DP::predicate(vector<Token> &t)
-{
-    vector<Token> list;
-    list.push_back(consume_terminal(t, "ID"));
-    list.push_back(consume_terminal(t, "LEFT_PAREN"));
-    for (auto &i : parameter(t))
-    {
-        list.push_back(i);
-    }
-    for (auto &i : parameterList(t))
-    {
-        list.push_back(i);
-    }
-    list.push_back(consume_terminal(t, "RIGHT_PAREN"));
-    return list;
-}
-
-vector<Token> DP::predicateList(vector<Token> &t)
-{
-    vector<Token> list;
-    if (t[0].type == "COMMA")
-    {
-        list.push_back(consume_terminal(t, "COMMA"));
+        list.push_back(consume_terminal(t, "COLON_DASH"));
         for (auto &i : predicate(t))
         {
             list.push_back(i);
@@ -268,49 +254,89 @@ vector<Token> DP::predicateList(vector<Token> &t)
         {
             list.push_back(i);
         }
+        list.push_back(consume_terminal(t, "PERIOD"));
     }
-    else if (t[0].type == "PERIOD")
+    catch (Token bad_token)
     {
-        return list;
-    }
-    else
-    {
-        cout << "ERROR when reading predicateList" << endl;
+        throw bad_token;
     }
     return list;
 }
 
-vector<Token> DP::parameter(vector<Token> &t)
+vector<vector<Token>> DP::ruleList(vector<Token> &t)
+{
+    vector<vector<Token>> list;
+    try
+    {
+        if (t[0].type == "ID")
+        {
+            list.push_back(rule(t));
+            for (auto &i : ruleList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else if (t[0].type == "QUERIES")
+        {
+            return list;
+        }
+        else
+        {
+            //cout << "ERROR while reading ruleList" << endl;
+            throw t[0];
+        }
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
+    }
+    return list;
+}
+
+vector<vector<Token>> DP::ruleObject(vector<Token> &t)
+{
+    vector<vector<Token>> list;
+    try
+    {
+        consume_terminal(t, "RULES");
+        consume_terminal(t, "COLON");
+        list = ruleList(t);
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
+    }
+    return list;
+}
+
+vector<Token> DP::headPredicate(vector<Token> &t)
 {
     vector<Token> list;
-    if (t[0].type == "STRING")
-    {
-        list.push_back(consume_terminal(t, "STRING"));
-    }
-    else if (t[0].type == "ID")
+    try
     {
         list.push_back(consume_terminal(t, "ID"));
-    }
-    else if (t[0].type == "LEFT_PAREN")
-    {
-        for (auto &i : expression(t))
+        list.push_back(consume_terminal(t, "LEFT_PAREN"));
+        list.push_back(consume_terminal(t, "ID"));
+        for (auto &i : idList(t))
         {
             list.push_back(i);
         }
-    } 
-    else
+        list.push_back(consume_terminal(t, "RIGHT_PAREN"));
+    }
+    catch (Token bad_token)
     {
-        cout << "ERROR when reading paramter" << endl;
+        throw bad_token;
     }
     return list;
 }
 
-vector<Token> DP::parameterList(vector<Token> &t)
+vector<Token> DP::predicate(vector<Token> &t)
 {
     vector<Token> list;
-    if (t[0].type == "COMMA")
+    try
     {
-        list.push_back(consume_terminal(t, "COMMA"));
+        list.push_back(consume_terminal(t, "ID"));
+        list.push_back(consume_terminal(t, "LEFT_PAREN"));
         for (auto &i : parameter(t))
         {
             list.push_back(i);
@@ -319,14 +345,112 @@ vector<Token> DP::parameterList(vector<Token> &t)
         {
             list.push_back(i);
         }
+        list.push_back(consume_terminal(t, "RIGHT_PAREN"));
     }
-    else if (t[0].type == "RIGHT_PAREN")
+    catch (Token bad_token)
     {
-        return list;
+        throw bad_token;
     }
-    else
+    return list;
+}
+
+vector<Token> DP::predicateList(vector<Token> &t)
+{   
+    vector<Token> list;
+    try
     {
-        cout << "ERROR when reading parameterList" << endl;
+        if (t[0].type == "COMMA")
+        {
+            list.push_back(consume_terminal(t, "COMMA"));
+            for (auto &i : predicate(t))
+            {
+                list.push_back(i);
+            }
+            for (auto &i : predicateList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else if (t[0].type == "PERIOD")
+        {
+            return list;
+        }
+        else
+        {
+            //cout << "ERROR when reading predicateList" << endl;
+            throw t[0];
+        }
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
+    }
+    return list;
+}
+
+vector<Token> DP::parameter(vector<Token> &t)
+{
+    vector<Token> list;
+    try
+    {
+        if (t[0].type == "STRING")
+        {
+            list.push_back(consume_terminal(t, "STRING"));
+        }
+        else if (t[0].type == "ID")
+        {
+            list.push_back(consume_terminal(t, "ID"));
+        }
+        else if (t[0].type == "LEFT_PAREN")
+        {
+            for (auto &i : expression(t))
+            {
+                list.push_back(i);
+            }
+        } 
+        else
+        {
+            //cout << "ERROR when reading paramter" << endl;
+            throw t[0];
+        }
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
+    }
+    return list;
+}
+
+vector<Token> DP::parameterList(vector<Token> &t)
+{
+    vector<Token> list;
+    try
+    {
+        if (t[0].type == "COMMA")
+        {
+            list.push_back(consume_terminal(t, "COMMA"));
+            for (auto &i : parameter(t))
+            {
+                list.push_back(i);
+            }
+            for (auto &i : parameterList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else if (t[0].type == "RIGHT_PAREN")
+        {
+            return list;
+        }
+        else
+        {
+            //cout << "ERROR when reading parameterList" << endl;
+            throw t[0];
+        }
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
     }
     return list;
 }
@@ -334,62 +458,95 @@ vector<Token> DP::parameterList(vector<Token> &t)
 vector<Token> DP::expression(vector<Token> &t)
 {
     vector<Token> list;
-    list.push_back(consume_terminal(t, "LEFT_PAREN"));
-    for (auto &i : parameter(t))
+    try
     {
-        list.push_back(i);
+        list.push_back(consume_terminal(t, "LEFT_PAREN"));
+        for (auto &i : parameter(t))
+        {
+            list.push_back(i);
+        }
+        list.push_back(oper(t));
+        for (auto &i : parameter(t))
+        {
+            list.push_back(i);
+        }    
+        list.push_back(consume_terminal(t, "LEFT_PAREN"));
     }
-    list.push_back(oper(t));
-    for (auto &i : parameter(t))
+    catch (Token bad_token)
     {
-        list.push_back(i);
-    }    
-    list.push_back(consume_terminal(t, "LEFT_PAREN"));
+        throw bad_token;
+    }
     return list;
 }
 
 Token DP::oper(vector<Token> &t)
 {
-    if (t[0].type == "ADD")
+    try
     {
-        return consume_terminal(t, "ADD");
+        if (t[0].type == "ADD")
+        {
+            return consume_terminal(t, "ADD");
+        }
+        
+        else if (t[0].type == "MULTIPY")
+        {
+            return consume_terminal(t, "MULTIPLY");
+        }    
+        else
+        {
+            //cout << "ERROR when reading operator" << endl;
+            throw t[0];
+        }
     }
-    
-    else if (t[0].type == "MULTIPY")
+    catch (Token bad_token)
     {
-        return consume_terminal(t, "MULTIPLY");
-    }    
-    else
-    {
-        cout << "ERROR when reading operator" << endl;
+        throw bad_token;
     }
 }
 
 vector<Token> DP::query(vector<Token> &t)
 {
     vector<Token> list;
-    for (auto &i : predicate(t))
+    try
     {
-        list.push_back(i);
+        for (auto &i : predicate(t))
+        {
+            list.push_back(i);
+        }
+        list.push_back(consume_terminal(t, "Q_MARK"));
     }
-    list.push_back(consume_terminal(t, "Q_MARK"));
+    catch (Token bad_token)
+    {
+        throw bad_token;
+    }
     return list;
 }
 
 vector<vector<Token>> DP::queryList(vector<Token> &t)
 {
     vector<vector<Token>> list;
-    if (t[0].type == "ID")
+    try
     {
-        list.push_back(query(t));
-        for (auto &i : queryList(t))
+        if (t[0].type == "ID")
         {
-            list.push_back(i);
+            list.push_back(query(t));
+            for (auto &i : queryList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else if (t[0].type == "EOF")
+        {
+            return list;
+        }
+        else
+        {
+            throw t[0];
         }
     }
-    else if (t[0].type == "EOF")
+    catch (Token bad_token)
     {
-        return list;
+        throw bad_token;
     }
     return list;
 }
@@ -397,12 +554,19 @@ vector<vector<Token>> DP::queryList(vector<Token> &t)
 vector<vector<Token>> DP::queryObject(vector<Token> &t)
 {
     vector<vector<Token>> list;
-    consume_terminal(t, "QUERIES");
-    consume_terminal(t, "COLON");
-    list.push_back(query(t));
-    for (auto &i : queryList(t))
+    try
     {
-        list.push_back(i);
+        consume_terminal(t, "QUERIES");
+        consume_terminal(t, "COLON");
+        list.push_back(query(t));
+        for (auto &i : queryList(t))
+        {
+            list.push_back(i);
+        }
+    }
+    catch (Token bad_token)
+    {
+        throw bad_token;
     }
     return list;
 }
@@ -410,18 +574,29 @@ vector<vector<Token>> DP::queryObject(vector<Token> &t)
 vector<Token> DP::stringList(vector<Token> &t)
 {
     vector<Token> list;
-    if (t[0].type == "RIGHT_PAREN")
+    try
     {
-        return list;
-    }
-    else if (t[0].type == "COMMA")
-    {
-        list.push_back(consume_terminal(t, "COMMA"));
-        list.push_back(consume_terminal(t, "STRING"));
-        for (auto &i : stringList(t))
+        if (t[0].type == "RIGHT_PAREN")
         {
-            list.push_back(i);
+            return list;
         }
+        else if (t[0].type == "COMMA")
+        {
+            list.push_back(consume_terminal(t, "COMMA"));
+            list.push_back(consume_terminal(t, "STRING"));
+            for (auto &i : stringList(t))
+            {
+                list.push_back(i);
+            }
+        }
+        else
+        {
+            throw t[0];
+        }
+    }
+    catch(Token bad_token)
+    {
+        throw bad_token;
     }
     return list;
 }

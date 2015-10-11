@@ -6,6 +6,7 @@
 #include "Scheme.h"
 #include "Token.h"
 #include "DP.h"
+#include "Parser.h"
 
 using namespace std;
 /*
@@ -138,7 +139,17 @@ vector<Token> query(vector<Token> &t)
 */
 int main(int argc, char* argv[])
 {
-    DP datalogProgram = DP(argv[1]);
+    Parser p = Parser(argv[1]);
+    try
+    {
+        p.parse();
+        cout << p.toStr() << endl;
+    }
+    catch (Token bad_token)
+    {
+        cout << "Failure!" << endl;
+        cout << "  " << bad_token.toStr();
+    }
     /*
     Lexer lexer = Lexer(argv[1]);
     lexer.generate_tokens(); // text to tokens
@@ -147,6 +158,7 @@ int main(int argc, char* argv[])
     
     // print Schemes list WORKING
     
+    /*
     cout << "Schemes(" << datalogProgram.schemes_list.size() << "):" << endl;
     for (unsigned int i = 0; i < datalogProgram.schemes_list.size(); i++)
     {
@@ -179,7 +191,7 @@ int main(int argc, char* argv[])
     {
         cout << datalogProgram.query_list[i].toStr();
     }
-    
+    */
 /*
     vector<vector<Token>> r = datalogProgram.ruleObject(datalogProgram.tokenList);
     for (auto &i : r)
