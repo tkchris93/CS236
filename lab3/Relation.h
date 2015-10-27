@@ -12,8 +12,9 @@ using namespace std;
 class Relation
 {
 public:
-    Relation();
+    Relation(vector<string> columns);
     string toStr();
+    void add(vector<Token> pair);
     
     vector<string> schema;
     set<vector<Token>> table;

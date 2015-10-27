@@ -1,33 +1,14 @@
 #include "Relation.h"
 
-Relation::Relation()
+Relation::Relation(vector<string> columns)
 {
+    this->schema = columns;
     
+    /*
     vector<string> v;
     v.push_back("A");
     v.push_back("B"); 
     this->schema = v;
-    /*
-    set<vector<string>> temp;
-    vector<string> v1;
-    vector<string> v2;
-    vector<string> v3;
-    
-    v1.push_back("a");
-    v1.push_back("b");
-    
-    v2.push_back("c");
-    v2.push_back("a");
-    
-    v3.push_back("b");
-    v3.push_back("b");
-
-    temp.insert(v1);
-    temp.insert(v2);
-    temp.insert(v3);
-    
-    this->table = temp;
-    */
 
     set<vector<Token>> temp;
     Token t1 = Token("STRING", "a", 1);
@@ -58,7 +39,7 @@ Relation::Relation()
     temp.insert(v4);
     
     this->table = temp;
-    
+    */
 }
 
 string Relation::toStr()
@@ -90,4 +71,9 @@ string Relation::toStr()
         ss << endl;
     }
     return ss.str();
+}
+
+void Relation::add(vector<Token> pair)
+{
+    this->table.insert(pair);
 }

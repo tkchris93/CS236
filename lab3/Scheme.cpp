@@ -8,7 +8,7 @@ Scheme::Scheme(vector<Token> t)
     this->name = this->tokens[0].chars;
     for (unsigned int i=1; i < this->tokens.size(); i++)
     {
-        cout << tokens[i].toStr() << endl;
+        //cout << tokens[i].toStr() << endl;
         if (this->tokens[i].type == "ID" || this->tokens[i].type == "STRING")
             this->relevant_tokens.push_back(this->tokens[i]);
     }
