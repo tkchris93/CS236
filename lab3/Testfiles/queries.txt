@@ -1,0 +1,3 @@
+Queries:
+  HasSameAddress('Snoopy',Who)?
+  NameHasID('Snoopy',Id)?

@@ -1,0 +1,3 @@
+Rules:
+  HasSameAddress(X,Y) :- snap(A,X,B,C),snap(D,Y,B,E).
+  NameHasID(N,S) :- snap(S,N,A,P).
