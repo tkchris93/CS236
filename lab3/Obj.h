@@ -1,18 +1,21 @@
-#ifndef _RULE_H
-#define _RULE_H
+#ifndef _OBJ_H
+#define _OBJ_H
 #include "Token.h"
 #include "Parameter.h"
-#include <sstream>
 #include <string>
 #include <vector>
-#include "Obj.h"
+#include "String.h"
+#include "ID.h"
 
 using namespace std;
 
-class Rule : public Obj
+class Obj
 {
 public:
-    Rule(vector<Token> t) : Obj(t) {}
+    Obj(vector<Token> t);
+    vector<Token> get_tokens() { return tokens; }
+    string get_name() { return name; }
+    vector<Parameter> get_relevant() { return relevant_tokens; }
     string toStr();
     string relevant_toStr();
     

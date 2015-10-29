@@ -1,3 +1,4 @@
+/*
 #include "Fact.h"
 
 using namespace std;
@@ -36,3 +37,4 @@ string Fact::relevant_toStr()
     ss << endl;
     return ss.str();
 }
+*/

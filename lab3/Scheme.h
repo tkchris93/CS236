@@ -5,23 +5,15 @@
 #include <string>
 #include <sstream>
 #include "Token.h"
+//#include "Parameter.h"
+#include "Obj.h"
 
 using namespace std;
 
-class Scheme
+class Scheme : public Obj
 {
 public:
-    Scheme(vector<Token> t);
-    string toStr();
-    string relevant_toStr();
-    
-    vector<Token> get_tokens() { return tokens; }
-    string get_name() { return name; }
-    vector<Token> get_relevant() { return relevant_tokens; }
-    
-    vector<Token> tokens;
-    string name;
-    vector<Token> relevant_tokens;
+    Scheme(vector<Token> t) : Obj(t) { }
 };
 
 #endif

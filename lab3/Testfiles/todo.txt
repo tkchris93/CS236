@@ -1,2 +1,0 @@
-consider removing all the reference calls to the list t since it is stored within the class.
-remove the trailing space in Parse::toStr()

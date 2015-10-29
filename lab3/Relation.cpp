@@ -1,56 +1,19 @@
 #include "Relation.h"
 
-Relation::Relation(vector<string> columns)
+Relation::Relation(vector<string> sch)
 {
-    this->schema = columns;
-    
-    /*
-    vector<string> v;
-    v.push_back("A");
-    v.push_back("B"); 
-    this->schema = v;
-
-    set<vector<Token>> temp;
-    Token t1 = Token("STRING", "a", 1);
-    Token t2 = Token("STRING", "b", 1);
-    Token t3 = Token("STRING", "c", 1);
-    Token t4 = Token("STRING", "d", 1);
-    
-    vector<Token> v1;
-    vector<Token> v2;
-    vector<Token> v3;
-    vector<Token> v4;
-    
-    v1.push_back(t1);
-    v1.push_back(t2);
-      
-    v2.push_back(t3);
-    v2.push_back(t3);
-    
-    v3.push_back(t4);
-    v3.push_back(t2);
-    
-    v4.push_back(t4);
-    v4.push_back(t1);
-    
-    temp.insert(v1);
-    temp.insert(v2);
-    temp.insert(v3);
-    temp.insert(v4);
-    
-    this->table = temp;
-    */
+    this->schema = sch;
 }
 
 string Relation::toStr()
 {
     stringstream ss;
-    ss << "| ";
+    ss << "|  ";
     unsigned int count = 2;
     for (unsigned int i = 0; i < this->schema.size(); i++)
     {
-        ss << schema[i] << " | ";
-        count += (3 + schema[i].size());
+        ss << schema[i] << "  |  ";
+        count += (5 + schema[i].size());
     }
     ss << endl;
     for (unsigned int i = 0; i < count-1 ; i++)
@@ -59,6 +22,7 @@ string Relation::toStr()
     }
     ss << endl;
     
+    /*
     set<vector<Token>>::iterator it;
     for (it = this->table.begin(); it != this->table.end(); it++)
     {
@@ -70,10 +34,133 @@ string Relation::toStr()
         }
         ss << endl;
     }
+    */
+    
+    for (auto &vec : this->table)
+    {
+        ss << "| ";
+        for (auto &param : vec)
+        {
+            ss << param.chars << " | ";
+        }
+        ss << endl;
+    }
+    
+    
     return ss.str();
 }
 
-void Relation::add(vector<Token> pair)
+void Relation::add(vector<Parameter> tup)
 {
-    this->table.insert(pair);
+    this->table.insert(tup);
+}
+
+Relation Relation::select(ID id, String str)
+{
+    Relation new_R = Relation(this->schema);
+    int index = 0;
+    
+    for (unsigned int i = 0; i < this->schema.size(); i++)
+    {
+        if (this->schema[i] == id.chars)
+        {
+            index = i;
+        }
+    }
+    
+    for (auto &vec : this->table)
+    {
+        if (vec[index].chars == str.chars)
+        {
+            new_R.add(vec);
+        }
+    }
+    return new_R;
+}
+
+Relation Relation::select(ID id1, ID id2)
+{
+    Relation new_R = Relation(this->schema);
+    vector<int> indices;
+    
+    for (unsigned int i = 0; i < this->schema.size(); i++)
+    {
+        if (this->schema[i] == id1.chars)
+        {
+            indices.push_back(i);
+        }
+        if (this->schema[i] == id2.chars)
+        {
+            indices.push_back(i);
+        }
+    }
+    for (auto &vec : this->table)
+    {
+        if (vec[indices[0]].chars == vec[indices[1]].chars)
+        {
+            new_R.add(vec);
+        }
+    }
+
+    return new_R;
+}
+
+Relation Relation::project(vector<string> projections)
+{
+    vector<int> indices;
+    vector<string> new_schema;
+    for (unsigned int i = 0; i < projections.size(); i++)
+    {
+        for (unsigned int j = 0; j < this->schema.size(); j++)
+        {
+            if (projections[i] == this->schema[j])
+            {
+                indices.push_back(j);
+            }
+        }
+    }
+    
+    // populate new schema
+    for (unsigned int i = 0; i < indices.size(); i++)
+    {
+        new_schema.push_back(this->schema[indices[i]]);
+    }
+    
+    Relation new_R = Relation(new_schema);
+    for (auto &vec : this->table)
+    {
+        vector<Parameter> new_vec;
+        for (auto &i : indices)
+        {
+            new_vec.push_back(vec[i]);
+        }
+        new_R.add(new_vec);
+    }
+    return new_R;
+}
+
+Relation Relation::rename(vector<string> before, vector<string> after)
+{
+    Relation new_R = this->clone();
+    for (unsigned int i = 0; i < before.size(); i++)
+    {
+        for (unsigned int j = 0; j < new_R.schema.size(); j++)
+        {
+            if (new_R.schema[j] == before[i])
+            {
+                new_R.schema[j] = after[i];
+            }
+        }
+    }
+    return new_R;
+}
+
+Relation Relation::clone()
+{
+    Relation new_R = Relation(this->schema);
+    for (auto &vec : this->table)
+    {
+        new_R.add(vec);
+    }
+    return new_R;
 }

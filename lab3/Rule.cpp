@@ -1,5 +1,6 @@
 #include "Rule.h"
 
+/*
 Rule::Rule(vector<Token> t)
 {
     this->tokens = t;
@@ -12,6 +13,7 @@ Rule::Rule(vector<Token> t)
     }
     //There will need to be some kind of adjustment here. But, don't need to worry about this till lab 4.
 }
+*/
 
 string Rule::toStr()
 {
@@ -41,3 +43,4 @@ string Rule::relevant_toStr()
     }
     return ss.str();
 }
+
