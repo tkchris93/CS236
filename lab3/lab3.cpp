@@ -11,17 +11,13 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     Database d = Database(argv[1]);
-    cout << d.toStr() << endl;
     
-    Relation r = d.relations.at("SK");
-    vector<string> before;
-    vector<string> after;
-    before.push_back("A");
-    before.push_back("B");
-    after.push_back("X");
-    after.push_back("Y");
+    for (unsigned int i = 0; i < d.queries.size(); i++)
+    {
+        Relation r = d.relations.at(d.queries[i].name);
+        vector<Parameter> query_params = d.queries[i].relevant_tokens;
+        cout << d.evaluate(i, r, query_params);
+    }
     
-    cout << r.rename(before,after).toStr() << endl;
-
     return 0;
 }

@@ -15,19 +15,20 @@ using namespace std;
 class Relation
 {
 public:
-    Relation(vector<string> sch);
-    vector<string> get_schema(){ return schema; }
+    Relation();
+    Relation(vector<Parameter> sch);
+    vector<Parameter> get_schema(){ return schema; }
     set<vector<Parameter>> get_table(){ return table; }
     string toStr();
     
     void add(vector<Parameter> tup);
     Relation select(ID id, String str);
     Relation select(ID id1, ID id2);
-    Relation project(vector<string> projections);
-    Relation rename(vector<string> before, vector<string> after);
+    Relation project(vector<Parameter> projections);
+    Relation rename(vector<Parameter> before, vector<Parameter> after);
     Relation clone();
     
-    vector<string> schema;
+    vector<Parameter> schema;
     set<vector<Parameter>> table;
 };
 

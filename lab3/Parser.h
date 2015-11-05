@@ -13,6 +13,7 @@ using namespace std;
 class Parser
 {
 public:
+    //Parser() {this->filename = NULL;}
     Parser(char* f);
     void parse();
     string toStr();

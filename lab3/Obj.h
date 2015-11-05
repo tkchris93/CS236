@@ -17,6 +17,7 @@ public:
     string get_name() { return name; }
     vector<Parameter> get_relevant() { return relevant_tokens; }
     string toStr();
+    string toStr2();
     string relevant_toStr();
     
     vector<Token> tokens;

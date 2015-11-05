@@ -6,6 +6,10 @@
 #include <iostream>
 #include "Relation.h"
 #include "Parameter.h"
+#include "ID.h"
+#include "Parser.h"
+#include "EvalContainer.h"
+#include "Query.h"
 
 using namespace std;
 
@@ -13,13 +17,14 @@ class Database
 {
 public:
     Database(char* filename);
-    //Relation project(Relation &r, vector<string> args);
-    //Relation rename(Relation &r, vector<string> args);
-    Relation select(Relation &r, map<string,string> selections);
-    
     string toStr();
     
+    string evaluate(int query_num, Relation r, vector<Parameter> query_params); //big boy evaluator
+    EvalContainer eval(int index,EvalContainer e, Parameter p); //incremental eval
+    
     map<string, Relation> relations;
+    vector<Query> queries;
+    bool full_output;
     
 };
 

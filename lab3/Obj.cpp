@@ -29,6 +29,16 @@ string Obj::toStr()
     return ss.str();
 }
 
+string Obj::toStr2()
+{
+    stringstream ss;
+    for (unsigned int i = 0; i < this->tokens.size(); i++)
+    {
+        ss << tokens[i].chars;
+    }
+    return ss.str();
+}
+
 string Obj::relevant_toStr()
 {
     stringstream ss;

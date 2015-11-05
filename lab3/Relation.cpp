@@ -1,6 +1,11 @@
 #include "Relation.h"
 
-Relation::Relation(vector<string> sch)
+Relation::Relation()
+{
+    this->schema = vector<Parameter>();
+}
+
+Relation::Relation(vector<Parameter> sch)
 {
     this->schema = sch;
 }
@@ -12,8 +17,8 @@ string Relation::toStr()
     unsigned int count = 2;
     for (unsigned int i = 0; i < this->schema.size(); i++)
     {
-        ss << schema[i] << "  |  ";
-        count += (5 + schema[i].size());
+        ss << schema[i].chars << "  |  ";
+        count += (5 + schema[i].chars.size());
     }
     ss << endl;
     for (unsigned int i = 0; i < count-1 ; i++)
@@ -62,7 +67,7 @@ Relation Relation::select(ID id, String str)
     
     for (unsigned int i = 0; i < this->schema.size(); i++)
     {
-        if (this->schema[i] == id.chars)
+        if (this->schema[i] == id)
         {
             index = i;
         }
@@ -75,6 +80,7 @@ Relation Relation::select(ID id, String str)
             new_R.add(vec);
         }
     }
+    //cout << new_R.toStr() << endl;
     return new_R;
 }
 
@@ -101,54 +107,65 @@ Relation Relation::select(ID id1, ID id2)
             new_R.add(vec);
         }
     }
-
+    //cout << new_R.toStr() << endl;
     return new_R;
 }
 
-Relation Relation::project(vector<string> projections)
+Relation Relation::project(vector<Parameter> projections)
 {
-    vector<int> indices;
-    vector<string> new_schema;
-    for (unsigned int i = 0; i < projections.size(); i++)
+    if (projections.size() != 0)
     {
-        for (unsigned int j = 0; j < this->schema.size(); j++)
+        vector<int> indices;
+        vector<Parameter> new_schema;
+        for (unsigned int i = 0; i < projections.size(); i++)
         {
-            if (projections[i] == this->schema[j])
+            for (unsigned int j = 0; j < this->schema.size(); j++)
             {
-                indices.push_back(j);
+                if (projections[i] == this->schema[j])
+                {
+                    indices.push_back(j);
+                }
             }
         }
-    }
-    
-    // populate new schema
-    for (unsigned int i = 0; i < indices.size(); i++)
-    {
-        new_schema.push_back(this->schema[indices[i]]);
-    }
-    
-    Relation new_R = Relation(new_schema);
-    for (auto &vec : this->table)
-    {
-        vector<Parameter> new_vec;
-        for (auto &i : indices)
+        
+        // populate new schema
+        for (unsigned int i = 0; i < indices.size(); i++)
         {
-            new_vec.push_back(vec[i]);
+            new_schema.push_back(this->schema[indices[i]]);
         }
-        new_R.add(new_vec);
+        
+        Relation new_R = Relation(new_schema);
+        for (auto &vec : this->table)
+        {
+            vector<Parameter> new_vec;
+            for (auto &i : indices)
+            {
+                new_vec.push_back(vec[i]);
+            }
+            new_R.add(new_vec);
+        }
+        return new_R;
     }
-    return new_R;
+    else
+    {
+        return this->clone();
+    }
+    
 }
 
-Relation Relation::rename(vector<string> before, vector<string> after)
+Relation Relation::rename(vector<Parameter> before, vector<Parameter> after)
 {
     Relation new_R = this->clone();
-    for (unsigned int i = 0; i < before.size(); i++)
+    if (before.size() != 0)
     {
-        for (unsigned int j = 0; j < new_R.schema.size(); j++)
+        for (unsigned int i = 0; i < before.size(); i++)
         {
-            if (new_R.schema[j] == before[i])
+            for (unsigned int j = 0; j < new_R.schema.size(); j++)
             {
-                new_R.schema[j] = after[i];
+                if (new_R.schema[j] == before[i])
+                {
+                    new_R.schema[j] = after[i];
+                }
             }
         }
     }
@@ -164,3 +181,5 @@ Relation Relation::clone()
     }
     return new_R;
 }
+
+
